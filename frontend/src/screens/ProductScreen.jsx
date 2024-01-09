@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Link, useParams } from "react-router-dom";
 import products from "../products";
 import {
@@ -16,7 +16,9 @@ const ProductScreen = () => {
   const { id: productId } = useParams();
 
   //use useMemo here to avoid unnecessary computation when using memo storage for performance reasons.
-  const product = products.find((p) => p._id == productId);
+//   const product = products.find((p) => p._id == productId);
+
+  const product = useMemo(() => products.find((p) => p._id == productId), [productId]);
   //   console.log("product",product);
 
   return (
