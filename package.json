@@ -8,7 +8,9 @@
     "start": "node backend/server.js",
     "serve": "nodemon backend/server.js",
     "client": "npm start --prefix frontend",
-    "dev": "concurrently \"npm run serve\" \"npm run client\""
+    "dev": "concurrently \"npm run serve\" \"npm run client\"",
+    "data:import": "node backend/seeder.js",
+    "data:destroy": "node backend/seeder.js -d"
   },
   "author": "apurba",
   "license": "ISC",
