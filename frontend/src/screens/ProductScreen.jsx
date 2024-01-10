@@ -1,6 +1,5 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { Link, useParams } from "react-router-dom";
-import products from "../products";
 import {
   Button,
   Card,
@@ -11,15 +10,27 @@ import {
   Row,
 } from "react-bootstrap";
 import Rating from "../components/Rating";
+import { useState } from "react";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const ProductScreen = () => {
+  const [product, setProduct] = useState([]);
+
   const { id: productId } = useParams();
 
-  //use useMemo here to avoid unnecessary computation when using memo storage for performance reasons.
-//   const product = products.find((p) => p._id == productId);
+  useEffect(() => {
+    const fetchProduct = async () => {
+      const { data } = await axios.get(`/api/products/${productId}`);
+      if (data) {
+        setProduct(data);
+      } else {
+        toast.error(`Product ${productId} not found`);
+      }
+    };
 
-  const product = useMemo(() => products.find((p) => p._id == productId), [productId]);
-  //   console.log("product",product);
+    fetchProduct();
+  }, [productId]);
 
   return (
     <>
