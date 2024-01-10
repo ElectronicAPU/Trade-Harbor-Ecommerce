@@ -13,6 +13,8 @@
   "author": "apurba",
   "license": "ISC",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "colors": "^1.4.0",
     "express": "^4.18.2",
     "mongodb": "^6.3.0",
     "mongoose": "^8.0.4"
