@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import {
   Button,
@@ -6,7 +6,6 @@ import {
   Col,
   Image,
   ListGroup,
-  ListGroupItem,
   Row,
 } from "react-bootstrap";
 import Rating from "../components/Rating";
