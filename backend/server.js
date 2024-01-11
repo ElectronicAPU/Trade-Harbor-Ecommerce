@@ -3,12 +3,15 @@ import express from "express";
 import connectDB from "./config/db.js";
 import productRoutes from "./routes/productRoutes.js";
 import { errorHanler, notFound } from "./middleware/errorMiddleware.js";
+import cors from "cors";
 
 const port = process.env.PORT || 5000;
 
 dotenv.config();
 connectDB();
 const app = express();
+
+app.use(cors());
 
 app.get("/", (req, res) => {
   res.send("API is running...");
