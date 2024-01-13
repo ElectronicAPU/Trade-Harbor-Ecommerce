@@ -12,7 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import Message from "../components/Message";
 import { FaTrash } from "react-icons/fa";
-import { addToCart } from "../slices/cartSlice";
+import { addToCart, removeFromCart } from "../slices/cartSlice";
 
 const CartScreen = () => {
   const navigate = useNavigate();
@@ -23,6 +23,9 @@ const CartScreen = () => {
 
   const addToCartHandler = async (product, qty) => {
     dispatch(addToCart({ ...product, qty }));
+  };
+  const removeFromCartHandler = async (id) => {
+    dispatch(removeFromCart(id));
   };
 
   return (
@@ -62,7 +65,11 @@ const CartScreen = () => {
                       </Form.Control>
                     </Col>
                     <Col md={2}>
-                      <Button type="button" variant="light">
+                      <Button
+                        onClick={() => removeFromCartHandler(item._id)}
+                        type="button"
+                        variant="light"
+                      >
                         <FaTrash />
                       </Button>
                     </Col>
