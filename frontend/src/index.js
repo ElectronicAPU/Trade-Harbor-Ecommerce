@@ -12,8 +12,6 @@ import "./assets/styles/index.css";
 import "./assets/styles/bootstrap.custom.css";
 import HomeScreen from "./screens/HomeScreen";
 import ProductScreen from "./screens/ProductScreen";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import { Provider } from "react-redux";
 import store from "./store";
 import CartScreen from "./screens/CartScreen";
@@ -36,7 +34,6 @@ root.render(
   <React.StrictMode>
     <Provider store={store}>
       <RouterProvider router={router} />
-      <ToastContainer />
     </Provider>
   </React.StrictMode>
 );
