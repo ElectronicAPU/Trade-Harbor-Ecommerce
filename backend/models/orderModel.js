@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const orderSchema = new mongoose.Schema(
   {
     user: { type: mongoose.Schema.Types.ObjectId, required: true, ref: "User" },
-    orderItmes: [
+    orderItems: [
       {
         name: { type: String, required: true },
         qty: { type: Number, required: true },
@@ -22,7 +22,7 @@ const orderSchema = new mongoose.Schema(
       postalCode: { type: String, required: true },
       country: { type: String, required: true },
     },
-    paymoentMethod: { type: String, required: true },
+    paymentMethod: { type: String, required: true }, // Fix the typo here
     paymentResult: {
       id: { type: String },
       status: { type: String },
@@ -30,9 +30,9 @@ const orderSchema = new mongoose.Schema(
       email_address: { type: String },
     },
     itemsPrice: { type: Number, required: true, default: 0.0 },
-    gstPrice: { type: Number, required: true, default: 0.0 },
+    taxPrice: { type: Number, required: true, default: 0.0 },
     shippingPrice: { type: Number, required: true, default: 0.0 },
-    totaalPrice: { type: Number, required: true, default: 0.0 },
+    totalPrice: { type: Number, required: true, default: 0.0 }, // Fix the typo here
     isPaid: { type: Boolean, required: true, default: false },
     paidAt: { type: Date },
     isDelivered: {
@@ -40,7 +40,7 @@ const orderSchema = new mongoose.Schema(
       required: true,
       default: false,
     },
-    deleveredAt: {
+    deliveredAt: { // Fix the typo here
       type: Date,
     },
   },

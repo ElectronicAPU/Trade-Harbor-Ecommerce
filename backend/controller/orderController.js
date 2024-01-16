@@ -5,39 +5,48 @@ import Order from "../models/orderModel.js";
 // @route   POST/ api/orders
 // @access  Private
 const addOrderItems = asyncHandler(async (req, res) => {
-  const {
-    orderItems,
-    shippingAddress,
-    paymentMethod,
-    itemsPrice,
-    taxPrice,
-    totalPrice,
-    shippingPrice,
-  } = req.body;
-
-  if (orderItems && orderItems.length === 0) {
-    res.status(400);
-    throw new Error("No Order Items found");
-  } else {
-    const order = new Order({
-      orderItems: orderItems.map((x) => ({
-        ...x,
-        product: x._id,
-        _id: undefined,
-      })),
-      user: req.user._id,
+  try {
+    const {
+      orderItems,
       shippingAddress,
       paymentMethod,
       itemsPrice,
       taxPrice,
       totalPrice,
       shippingPrice,
-    });
-
-    const createOrder = await order.save();
-    res.status(201).jsson(createOrder);
+    } = req.body;
+  
+    // Check if orderItems is not defined or is an empty array
+    if (!Array.isArray(orderItems) || orderItems.length === 0) {
+      res.status(400);
+      throw new Error('No Order Items found');
+    } else {
+      const order = new Order({
+        orderItems: orderItems.map((x) => ({
+          ...x,
+          product: x._id,
+          _id: undefined,
+        })),
+        user: req.user._id,
+        shippingAddress,
+        paymentMethod,
+        itemsPrice,
+        taxPrice,
+        totalPrice,
+        shippingPrice,
+      });
+  
+      const createOrder = await order.save();
+      res.status(201).json(createOrder);
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
   }
+  
 });
+
+
 
 // @desc    Get logged in user orders
 // @route   GET/ api/orders/myorders
