@@ -7,7 +7,7 @@ import {
 } from "../slices/orderApiSlice";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
-import { Card, Col, Image, ListGroup, Row } from "react-bootstrap";
+import { Button, Card, Col, Image, ListGroup, Row } from "react-bootstrap";
 import { PayPalButtons, usePayPalScriptReducer } from "@paypal/react-paypal-js";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
@@ -54,6 +54,51 @@ const OrderScreen = () => {
     }
   }, [order, paypal]);
 
+  const onApproveTest = async () => {
+    await payOrder({ orderId, details: { payer: {} } });
+    refetch();
+    toast.success("Payment Successful");
+  };
+
+  const createOrder = (data, actions) => {
+    // Check if order.totalPrice is defined
+    if (order.totalPrice) {
+      return actions.order
+        .create({
+          purchase_units: [
+            {
+              amount: {
+                value: order.totalPrice,
+              },
+            },
+          ],
+        })
+        .then((orderId) => {
+          return orderId;
+        });
+    } else {
+      toast.error("Order total price is not defined.");
+      throw new Error("Order total price is not defined.");
+    }
+  };
+
+  const onApprove = (data, actions) => {
+    return actions.order.capture().then(async function (details) {
+      try {
+        await payOrder({ orderId, details });
+        refetch();
+        toast.success("Payment Successful");
+      } catch (error) {
+        toast.error(error?.data?.message || error.message);
+      }
+    });
+  };
+  const onError = (error) => {
+    toast.error(error.message);
+  };
+
+  console.log("order", order);
+
   return (
     <>
       {isLoading ? (
@@ -94,7 +139,7 @@ const OrderScreen = () => {
                 <ListGroup.Item>
                   <h2>Payment Method</h2>
                   {order.isPaid ? (
-                    <Message variant="success">paid on {order.isPaid}</Message>
+                    <Message variant="success">paid on {order.paidAt}</Message>
                   ) : (
                     <Message variant="danger">Not Paid</Message>
                   )}
@@ -146,7 +191,30 @@ const OrderScreen = () => {
                       <Col>${order.totalPrice}</Col>
                     </Row>
                   </ListGroup.Item>
-                  {/* PAY ORDER PLACEHOLDER*/}
+                  {!order.isPaid && (
+                    <ListGroup.Item>
+                      {loadingPay && <Loader />}
+                      {isPending ? (
+                        <Loader />
+                      ) : (
+                        <div>
+                          {/* <Button
+                            onClick={onApproveTest}
+                            style={{ marginBottom: "10px" }}
+                          >
+                            Test pay order{" "}
+                          </Button> */}
+                          <div>
+                            <PayPalButtons
+                              createOrder={createOrder}
+                              onApprove={onApprove}
+                              onError={onError}
+                            ></PayPalButtons>
+                          </div>
+                        </div>
+                      )}
+                    </ListGroup.Item>
+                  )}
                   {/* MARK AS DELIVERED PLACEHOLDE */}
                 </ListGroup>
               </Card>
