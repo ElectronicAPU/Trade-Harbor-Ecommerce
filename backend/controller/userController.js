@@ -21,7 +21,7 @@ const authUser = asyncHandler(async (req, res) => {
       isAdmin: user.isAdmin,
     });
   } else {
-    res.status(401);
+    res.status(401).json({ message: "Invalid email or password" });
     throw new Error("Invalid email or password");
   }
 });
@@ -53,7 +53,7 @@ const registerUser = asyncHandler(async (req, res) => {
         isAdmin: user.isAdmin,
       });
     } else {
-      res.status(400);
+      res.status(401).json({ message: "Invalid user data" });
       throw new Error("Invalid user data");
     }
   }
@@ -83,7 +83,7 @@ const getUserProfile = asyncHandler(async (req, res) => {
       isAdmin: user.isAdmin,
     });
   } else {
-    res.status(404);
+    res.status(404).json({ message: "User not found" });
     throw new Error("User not found");
   }
 });
@@ -101,7 +101,7 @@ const updateUserProfile = asyncHandler(async (req, res) => {
       user.password = req.body.password;
     }
 
-    const updatedUser = await user.save()
+    const updatedUser = await user.save();
 
     res.status(200).json({
       _id: updatedUser._id,
@@ -110,7 +110,7 @@ const updateUserProfile = asyncHandler(async (req, res) => {
       isAdmin: updatedUser.isAdmin,
     });
   } else {
-    res.status(404);
+    res.status(404).json({ message: "User not found" });
     throw new Error("User not found");
   }
 });
