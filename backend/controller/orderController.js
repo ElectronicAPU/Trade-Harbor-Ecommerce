@@ -15,11 +15,11 @@ const addOrderItems = asyncHandler(async (req, res) => {
       totalPrice,
       shippingPrice,
     } = req.body;
-  
+
     // Check if orderItems is not defined or is an empty array
     if (!Array.isArray(orderItems) || orderItems.length === 0) {
       res.status(400);
-      throw new Error('No Order Items found');
+      throw new Error("No Order Items found");
     } else {
       const order = new Order({
         orderItems: orderItems.map((x) => ({
@@ -35,18 +35,15 @@ const addOrderItems = asyncHandler(async (req, res) => {
         totalPrice,
         shippingPrice,
       });
-  
+
       const createOrder = await order.save();
       res.status(201).json(createOrder);
     }
   } catch (error) {
-    console.error('Error:', error);
-    res.status(500).json({ message: 'Internal Server Error' });
+    console.error("Error:", error);
+    res.status(500).json({ message: "Internal Server Error" });
   }
-  
 });
-
-
 
 // @desc    Get logged in user orders
 // @route   GET/ api/orders/myorders
@@ -66,7 +63,7 @@ const getOrderById = asyncHandler(async (req, res) => {
   );
 
   if (order) {
-    res.status(200).json(order); 
+    res.status(200).json(order);
   } else {
     res.status(404);
     throw new Error("order not found");
@@ -74,14 +71,33 @@ const getOrderById = asyncHandler(async (req, res) => {
 });
 
 // @desc    Update order to paid
-// @route   GET/ api/orders/:id/pay
+// @route   PUT/ api/orders/:id/pay
 // @access  Private
 const updateOrderToPaid = asyncHandler(async (req, res) => {
-  res.send("update Order To Paid");
+  const order = await Order.findById(req.params.id);
+
+  if (order) {
+    order.isPaid = true;
+    order.paidAt = Date.now();
+    //Come from PayPal
+    order.paymentResult = {
+      id: req.body.id,
+      status: req.body.status,
+      update_time: req.body.update_time,
+      email_address: req.body.payer.email_address,
+    };
+
+    const updatedOrder = await order.save();
+
+    res.status(200).json(updatedOrder);
+  } else {
+    res.status(404);
+    throw new Error("Order not found");
+  }
 });
 
 // @desc    Update to delivered
-// @route   GET/ api/orders/:id/pay
+// @route   PUT/ api/orders/:id/pay
 // @access  Private/Admin
 const updateOrderToDelivered = asyncHandler(async (req, res) => {
   res.send("update Order To Delivered");
