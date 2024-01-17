@@ -11,6 +11,7 @@ import { Button, Card, Col, Image, ListGroup, Row } from "react-bootstrap";
 import { PayPalButtons, usePayPalScriptReducer } from "@paypal/react-paypal-js";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
+import { LinkContainer } from "react-router-bootstrap";
 
 const OrderScreen = () => {
   const { id: orderId } = useParams();
@@ -156,6 +157,11 @@ const OrderScreen = () => {
                             fluid
                             rounded
                           />
+                        </Col>
+                        <Col>
+                          <Link to={`/product/${orderItem.product}`}>
+                            {orderItem.name}
+                          </Link>
                         </Col>
                         <Col md={4}>
                           {orderItem.qty} x {orderItem.price} = ${" "}

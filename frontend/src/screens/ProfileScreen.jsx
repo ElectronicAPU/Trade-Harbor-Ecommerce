@@ -2,9 +2,12 @@ import React, { useEffect, useState } from "react";
 import { useProfileMutation } from "../slices/usersApiSlice";
 import { setCredentials } from "../slices/authSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { Button, Col, Form, Row } from "react-bootstrap";
+import { Button, Col, Form, Row, Table } from "react-bootstrap";
 import Loader from "../components/Loader";
 import { toast } from "react-toastify";
+import { useGetMyOrdersQuery } from "../slices/orderApiSlice";
+import Message from "../components/Message";
+import { LinkContainer } from "react-router-bootstrap";
 
 const ProfileScreen = () => {
   const [name, setName] = useState("");
@@ -17,6 +20,10 @@ const ProfileScreen = () => {
 
   const [updateProfile, { isLoading: loadingUpdateProfile }] =
     useProfileMutation();
+
+  const { data: orders, isLoading, error } = useGetMyOrdersQuery();
+
+  console.log(orders);
 
   useEffect(() => {
     if (userInfo) {
@@ -94,7 +101,47 @@ const ProfileScreen = () => {
             {loadingUpdateProfile && <Loader />}
           </Form>
         </Col>
-        <Col md={9}>Column</Col>
+        <Col md={9}>
+          <h1>My Orders</h1>
+          {isLoading ? (
+            <Loader />
+          ) : error ? (
+            <Message variant="danger">
+              {error?.data?.message || error?.message}
+            </Message>
+          ) : (
+            <Table striped hover responsive className="table-sm">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Data</th>
+                  <th>TOTAL</th>
+                  <th>PAID</th>
+                  <th>DELIVERED</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {orders.map((order) => (
+                  <tr key={order._id}>
+                    <td>{order._id}</td>
+                    <td>{order.createdAt.substring(0, 10)}</td>
+                    <td>{order.totalPrice}</td>
+                    <td>{order.isPaid ? "PAID" : "NOT PAID"}</td>
+                    <td>{order.isDelivered ? "Delivered" : "NOT Delivered"}</td>
+                    <td>
+                      <LinkContainer to={`/order/${order._id}`}>
+                        <Button className="btn-sm" variant="light">
+                          Details
+                        </Button>
+                      </LinkContainer>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          )}
+        </Col>
       </Row>
     </>
   );
