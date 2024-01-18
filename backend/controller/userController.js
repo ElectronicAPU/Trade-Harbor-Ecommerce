@@ -119,28 +119,70 @@ const updateUserProfile = asyncHandler(async (req, res) => {
 // @route   GET/ api/users
 // @access  Private/Admin
 const getUsers = asyncHandler(async (req, res) => {
-  res.send("get user");
+  const users = await User.find({});
+  if (users) {
+    res.status(200).json(users);
+  } else {
+    res.status(404).json({ message: "User not found" });
+    throw new Error("User not found");
+  }
 });
 
 // @desc    Get users by ID
 // @route   GET/ api/users/:id
 // @access  Private/Admin
 const getUsersByID = asyncHandler(async (req, res) => {
-  res.send("get user by ID");
+  const user = await User.findById(req.params.id).select("-password");
+
+  if (user) {
+    res.status(200).json(user);
+  } else {
+    res.status(404).json({ message: "User not found" });
+    throw new Error("User Not Found");
+  }
 });
 
 // @desc    Delete users
 // @route   DELETE/ api/users/:id
 // @access  Private/Admin
 const deleteUsers = asyncHandler(async (req, res) => {
-  res.send("delete user");
+  const user = await User.findById(req.params.id);
+  if (user) {
+    if (user.isAdmin) {
+      res.status(400).json({ message: "Cannot delete admin user" });
+      throw new Error("Cannot delete admin user");
+    }
+    await User.deleteOne({ _id: user._id });
+    res.status(200).json({ message: "User deleted successfully" });
+  } else {
+    res.status(404).json({ message: "User not found" });
+    throw new Error("User not found");
+  }
 });
 
 // @desc    Update users
 // @route   PUT/ api/users/:id
 // @access  Private/Admin
 const updateUsers = asyncHandler(async (req, res) => {
-  res.send("update user");
+  const user = await User.findById(req.params.id);
+
+  if (user) {
+    (user.name = req.body.name || user.name),
+      (user.email = req.body.email || user.email);
+    user.isAdmin = Boolean(req.body.isAdmin);
+
+    const updatedUser = await User.save();
+
+    res.status(200).json({
+      _id: updatedUser._id,
+      name: updatedUser.name,
+      email: updatedUser.email,
+      isAdmin: updatedUser.isAdmin,
+    });
+  } else {
+    res.status(404).json({ message: "User not found" });
+    throw new Error("User not found");
+  }
 });
 
 export {
