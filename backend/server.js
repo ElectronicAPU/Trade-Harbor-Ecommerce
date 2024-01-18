@@ -38,8 +38,8 @@ app.get("/api/config/paypal", (req, res) =>
   res.send({ clientId: process.env.PAYPAL_CLIENT_ID })
 );
 
-const __dirname = path.resolve(); // Set __dirname to current directory
-app.use("uploads", express.static(path.join(__dirname, "/uploads")));
+const __dirname = path.resolve();
+app.use("/uploads", express.static(path.join(__dirname, "/uploads")));
 
 app.use((err, req, res, next) => {
   console.error(err.stack);

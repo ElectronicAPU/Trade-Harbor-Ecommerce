@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import {
   useGetProductDetailsQuery,
   useUpdateProductMutation,
+  useUploadProductImageMutation,
 } from "../../slices/productsApiSlice";
 import FormContainer from "../../components/FormContainer";
 import Loader from "../../components/Loader";
@@ -32,6 +33,9 @@ const ProductEditScrren = () => {
 
   const [updateProduct, { isLoading: loadingUpdate }] =
     useUpdateProductMutation();
+
+  const [uploadProductImage, { isLoading: imageLoding }] =
+    useUploadProductImageMutation();
 
   useEffect(() => {
     if (product) {
@@ -68,6 +72,24 @@ const ProductEditScrren = () => {
     }
   };
 
+  const uploadFileHandler = async (e) => {
+    const formData = new FormData();
+    formData.append("image", e.target.files[0]);
+  
+    try {
+      const res = await uploadProductImage(formData).unwrap();
+      toast.success(res.message);
+  
+      // Replace backslashes with forward slashes
+      const imagePath = res.image.replace(/\\/g, '/');
+  
+      setImage(imagePath);
+    } catch (error) {
+      toast.error(error?.data?.message || error?.message);
+    }
+  };
+  
+
   return (
     <>
       <Link to="/admin/productlist" className="btn btn-light my-3">
@@ -100,7 +122,21 @@ const ProductEditScrren = () => {
                 onChange={(e) => setPrice(e.target.value)}
               ></Form.Control>
             </Form.Group>
-            {/* Image input placeholder */}
+            <Form.Group controlid="image" className="my-2">
+              <Form.Label>Image</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter image url"
+                value={image}
+                onChange={(e) => setImage}
+              ></Form.Control>
+              <Form.Control
+                type="file"
+                label="Choose file..."
+                onChange={uploadFileHandler}
+              ></Form.Control>
+            </Form.Group>
+
             <Form.Group controlid="brand" className="my-2">
               <Form.Label>Brand</Form.Label>
               <Form.Control
