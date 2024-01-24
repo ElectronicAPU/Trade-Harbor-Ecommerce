@@ -4,6 +4,7 @@ import {
   createProductReview,
   deleteProduct,
   getAllProducts,
+  getTopProducts,
   singelProduct,
   updateProduct,
 } from "../controller/productController.js";
@@ -13,6 +14,7 @@ const router = express.Router();
 
 // Products Routes
 router.route("/").get(getAllProducts).post(protect, admin, createProduct);
+router.route("/top").get(getTopProducts);
 router
   .route("/:id")
   .get(singelProduct)
